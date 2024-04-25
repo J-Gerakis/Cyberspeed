@@ -1,4 +1,4 @@
-package org.cyberspeed.dto.deserializers;
+package org.cyberspeed.dto;
 
 import com.google.gson.JsonObject;
 
@@ -16,4 +16,6 @@ public class Utils {
 
         } else return defaultVal;
     }
+
+
 }

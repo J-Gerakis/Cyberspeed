@@ -12,5 +12,6 @@ public record Probabilities(
     public Probabilities {
         if (standardSymbols == null || standardSymbols.isEmpty())
             throw new IllegalArgumentException("standard_symbols cannot be null");
+        //note possibility that there's no bonus symbols
     }
 }

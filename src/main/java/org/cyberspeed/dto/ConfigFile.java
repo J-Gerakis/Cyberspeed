@@ -1,7 +1,9 @@
 package org.cyberspeed.dto;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.util.Map;
+import java.util.Set;
 
 public record ConfigFile(
         Integer columns,
@@ -21,9 +23,20 @@ public record ConfigFile(
                 if (probabilities == null) throw new IllegalArgumentException("probabilities cannot be null");
                 if (winCombinations == null || winCombinations.isEmpty()) throw new IllegalArgumentException("winCombinations cannot be null");
 
+                // consistency checks between symbol list and probabilities list
+                // note: so far we allow symbols to contain unused item
+                probabilities.standardSymbols().forEach(s -> validateSymbolPresence(symbols.keySet(), s.valuesBySymbol().keySet()));
+                validateSymbolPresence(symbols.keySet(), probabilities.bonusSymbols().valuesByBonus().keySet());
+
+
                 //Note: add consistency checks on win combination vs columns/rows
-                // add consistency checks between symbol list and probabilities list
+
+        }
 
 
+        private void validateSymbolPresence(Set<String> declaredSymbols, Set<String> symbolsFromProbabilities) {
+                if(!declaredSymbols.containsAll(symbolsFromProbabilities)){
+                        throw new IllegalArgumentException("probabilities section contains undeclared symbols");
+                }
         }
 }

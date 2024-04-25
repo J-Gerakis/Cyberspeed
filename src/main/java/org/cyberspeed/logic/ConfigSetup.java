@@ -1,4 +1,4 @@
-package org.cyberspeed;
+package org.cyberspeed.logic;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8,23 +8,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ScratchGenerator {
+public class ConfigSetup {
 
-    private final ConfigFile config;
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .create();
 
-    public ScratchGenerator(String configPath) throws IOException {
+    public ConfigFile getConfig(String configPath) throws IOException {
         final String fileContent = readConfigFile(configPath);
-        config = gson.fromJson(fileContent, ConfigFile.class);
-    }
-
-    public void generate() {
-
-        System.out.println(config);
-
+        return gson.fromJson(fileContent, ConfigFile.class);
     }
 
     private static String readConfigFile(String configPath) throws IOException {

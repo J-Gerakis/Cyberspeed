@@ -17,7 +17,7 @@ public record Symbol (
             type = type.toLowerCase();
             if(!Enums.getIfPresent(SYMBOL_TYPE.class, type).isPresent()) {
                 throw new IllegalArgumentException("Invalid symbol type: " + type);
-            };
+            }
             if(type.equals(SYMBOL_TYPE.standard.name()) && rewardMultiplier == null) {
                 throw new IllegalArgumentException("reward_multiplier cannot be null for standard symbols");
             }

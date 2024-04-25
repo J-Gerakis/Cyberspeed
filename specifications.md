@@ -44,7 +44,7 @@ Bonus symbols are described the table below:
 
 Let's look at the configuration file below:
 
-```json
+```
 {
     "columns": 3, // OPTIONAL
     "rows": 3, // OPTIONAL
@@ -261,7 +261,7 @@ Input format:
 
 Output format:
 
-```json
+```
 {
     "matrix": [
         ["A", "A", "B"],

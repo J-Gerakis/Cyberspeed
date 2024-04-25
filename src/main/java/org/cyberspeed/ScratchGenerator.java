@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 public class ScratchGenerator {
 
-    private final Config config;
+    private final ConfigFile config;
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .disableHtmlEscaping()
@@ -18,7 +18,7 @@ public class ScratchGenerator {
 
     public ScratchGenerator(String configPath) throws IOException {
         final String fileContent = readConfigFile(configPath);
-        this.config = Config.map(gson.fromJson(fileContent, ConfigFile.class));
+        config = gson.fromJson(fileContent, ConfigFile.class);
     }
 
     public void generate() {

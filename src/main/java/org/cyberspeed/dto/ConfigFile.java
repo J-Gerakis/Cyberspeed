@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 import java.util.Set;
 
+import static org.cyberspeed.Utils.filterMapByValue;
+
 public record ConfigFile(
         Integer columns,
         Integer rows,
@@ -38,5 +40,9 @@ public record ConfigFile(
                 if(!declaredSymbols.containsAll(symbolsFromProbabilities)){
                         throw new IllegalArgumentException("probabilities section contains undeclared symbols");
                 }
+        }
+
+        public Map<String, WinCombination> getWinGroup(String groupName) {
+                return filterMapByValue(winCombinations, g -> g.group().equals(groupName));
         }
 }

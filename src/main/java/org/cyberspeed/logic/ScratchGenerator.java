@@ -20,18 +20,21 @@ public class ScratchGenerator {
         String[][] grid = new String[config.rows()][config.columns()];
         Map<String, Integer> symbolCount = new HashMap<>(); //useful later during evaluation
 
-        //let's take the probability list for standard symbols
-        for(ProbabilitySymbol probability : config.probabilities().standardSymbols()) {
-            String symbolName = drawAsymbol(probability.valuesBySymbol());
-            grid[probability.row()][probability.column()] = symbolName;
-            symbolCount.put(symbolName, symbolCount.getOrDefault(symbolName, 0) + 1);
-        }
-
-        String bonusName = drawAsymbol(config.probabilities().bonusSymbols().valuesByBonus());
         //Pick a random spot for bonus symbol generation
+        String bonusName = drawAsymbol(config.probabilities().bonusSymbols().valuesByBonus());
         int i = rgen.nextInt(config.rows());
         int j = rgen.nextInt(config.columns());
         grid[i][j] = bonusName;
+
+        //let's take the probability list for standard symbols
+        for(ProbabilitySymbol probability : config.probabilities().standardSymbols()) {
+            String symbolName = drawAsymbol(probability.valuesBySymbol());
+            //check if the spot is not already occupied by the bonus symbol
+            if(!bonusName.equals(grid[probability.row()][probability.column()])) {
+                grid[probability.row()][probability.column()] = symbolName;
+                symbolCount.put(symbolName, symbolCount.getOrDefault(symbolName, 0) + 1);
+            }
+        }
 
         return new Grid(grid, symbolCount, bonusName);
     }

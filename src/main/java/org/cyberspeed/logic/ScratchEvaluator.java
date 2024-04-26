@@ -11,13 +11,14 @@ import java.util.*;
 public class ScratchEvaluator {
 
     private final ConfigFile configFile;
+    private Map<String, List<String>> appliedWinningCombinations;
 
     public ScratchEvaluator(ConfigFile configFile) {
         this.configFile = configFile;
     }
 
     public Result evaluate(Grid grid, int bet) {
-        Map<String, List<String>> appliedWinningCombinations = new HashMap<>();
+        appliedWinningCombinations = new HashMap<>();
 
         //evaluate symbol count (if same symbol win condition is present)
         Map<String, WinCombination> sameSymbolWinList = configFile.getWinGroup(WinCombination.WIN_GROUP.same_symbols.name());
@@ -25,37 +26,67 @@ public class ScratchEvaluator {
             for (String symbolName : grid.symbolCount().keySet()) {
                 int count = grid.symbolCount().get(symbolName);
                 Optional<Map.Entry<String, WinCombination>> winningCombination = sameSymbolWinList.entrySet().stream().filter(g -> g.getValue().count() == count).findFirst();
-                if (winningCombination.isPresent()) {
-                    List<String> combinations = appliedWinningCombinations.getOrDefault(symbolName, new ArrayList<>());
-                    combinations.add(winningCombination.get().getKey());
-                    appliedWinningCombinations.put(symbolName, combinations);
+                winningCombination.ifPresent(stringWinCombinationEntry -> updateWinningCombinations(symbolName, stringWinCombinationEntry.getKey()));
+            }
+        }
+
+        Map<String, WinCombination> linearSymbolWinList;
+        Optional<String> conditionName;
+        //evaluate rows (if linear win condition is present)
+        linearSymbolWinList = configFile.getWinGroup(WinCombination.WIN_GROUP.horizontally_linear_symbols.name());
+        conditionName = linearSymbolWinList.keySet().stream().findFirst();
+        if(conditionName.isPresent()) {
+            for (int i = 0; i < configFile.rows(); i++) {
+                if (evalRow(grid.matrix(), i)) {
+                    String winningSymbolName = grid.get(i, 0);
+                    updateWinningCombinations(winningSymbolName, conditionName.get());
                 }
             }
         }
 
-
-        //evaluate rows (if linear win condition is present)
-        for (int i=0; i < configFile.rows(); i++){
-            if(evalRow(grid.matrix(), i)) {
-                String winningSymbolName = grid.get(i,0);
-                List<String> combinations = appliedWinningCombinations.getOrDefault(winningSymbolName, new ArrayList<>());
-                combinations.add(WinCombination.WIN_GROUP.horizontally_linear_symbols.name());
-                appliedWinningCombinations.put(winningSymbolName, combinations);
-            }
-        }
-
         //evaluate cols (if linear win condition is present)
-        for (int j=0; j < configFile.columns(); j++){
-            if(evalColumn(grid.matrix(), j)) {
-                String winningSymbolName = grid.get(0,j);
-                List<String> combinations = appliedWinningCombinations.getOrDefault(winningSymbolName, new ArrayList<>());
-                combinations.add(WinCombination.WIN_GROUP.vertically_linear_symbols.name());
-                appliedWinningCombinations.put(winningSymbolName, combinations);
+        linearSymbolWinList = configFile.getWinGroup(WinCombination.WIN_GROUP.vertically_linear_symbols.name());
+        conditionName = linearSymbolWinList.keySet().stream().findFirst();
+        if(conditionName.isPresent()) {
+            for (int j = 0; j < configFile.columns(); j++) {
+                if (evalColumn(grid.matrix(), j)) {
+                    String winningSymbolName = grid.get(0, j);
+                    updateWinningCombinations(winningSymbolName, conditionName.get());
+                }
             }
         }
+        //evaluate diagonals (only make sense if the grid is square)
+        if((int) configFile.columns() == configFile.rows()) {
+            linearSymbolWinList = configFile.getWinGroup(WinCombination.WIN_GROUP.ltr_diagonally_linear_symbols.name());
+            Optional<String> conditionNameLeft = linearSymbolWinList.keySet().stream().findFirst();
+            boolean ltrYes = conditionNameLeft.isPresent();
+            linearSymbolWinList = configFile.getWinGroup(WinCombination.WIN_GROUP.rtl_diagonally_linear_symbols.name());
+            Optional<String> conditionNameRight = linearSymbolWinList.keySet().stream().findFirst();
+            boolean rtlYes = conditionNameRight.isPresent();
+            String leftCornerSymbolName = grid.get(0, 0);
+            String rightCornerSymbolName = grid.get(0, configFile.columns() - 1);
+            boolean ltrContiguous = ltrYes;
+            boolean rtlContiguous = rtlYes;
+            int i=0,j=0;
+            while(i < configFile.rows()) {
+                if(!(leftCornerSymbolName.equals(grid.get(i,j)) && ltrYes && ltrContiguous)) {
+                    ltrContiguous = false;
+                }
+                if(!(rightCornerSymbolName.equals(grid.get(i,configFile.columns() - 1 - j)) && rtlYes && rtlContiguous)) {
+                    rtlContiguous = false;
+                }
 
-        //evaluate diagonals
+                i++;
+                j++;
+            }
+            if(ltrContiguous) {
+                updateWinningCombinations(leftCornerSymbolName, conditionNameLeft.get());
+            }
+            if(rtlContiguous) {
+                updateWinningCombinations(rightCornerSymbolName, conditionNameRight.get());
+            }
 
+        }
         //calculate reward
         Double reward = 0.0;
         for(String symbolName : appliedWinningCombinations.keySet()) {
@@ -77,6 +108,7 @@ public class ScratchEvaluator {
                 reward *= bonus.rewardMultiplier();
                 break;
             case miss:
+            default:
                 break;
         }
 
@@ -102,6 +134,12 @@ public class ScratchEvaluator {
             }
         }
         return true;
+    }
+
+    private void updateWinningCombinations(String symbolName, String combinationName) {
+        List<String> combinations = appliedWinningCombinations.getOrDefault(symbolName, new ArrayList<>());
+        combinations.add(combinationName);
+        appliedWinningCombinations.put(symbolName, combinations);
     }
 
 }

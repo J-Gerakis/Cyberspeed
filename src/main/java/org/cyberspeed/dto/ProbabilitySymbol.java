@@ -1,6 +1,7 @@
 package org.cyberspeed.dto;
 
 import com.google.gson.annotations.SerializedName;
+import org.cyberspeed.exception.ScratchException;
 
 import java.util.Map;
 
@@ -11,10 +12,10 @@ public record ProbabilitySymbol(
 ) {
         public ProbabilitySymbol {
                 if (column < 0 || row < 0) {
-                        throw new IllegalArgumentException("Invalid column or row index");
+                        throw new ScratchException("Invalid column or row index");
                 }
                 if (valuesBySymbol == null || valuesBySymbol.isEmpty()) {
-                        throw new IllegalArgumentException("Invalid probability symbol map");
+                        throw new ScratchException("Invalid probability symbol map");
                 }
         }
 }

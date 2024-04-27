@@ -1,5 +1,6 @@
 package org.cyberspeed;
 
+import com.google.common.base.Strings;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
 import org.cyberspeed.dto.ConfigFile;
@@ -20,15 +21,15 @@ import java.util.Arrays;
  */
 public class App 
 {
-    private final ConfigSetup setup = new ConfigSetup();
-    private ScratchGenerator generator;
-    private ScratchEvaluator evaluator;
+    private final ScratchGenerator generator;
+    private final ScratchEvaluator evaluator;
 
     public App(String configPath) {
-        ConfigFile conf = null;
+        ConfigFile conf;
         try {
+            ConfigSetup setup = new ConfigSetup();
             conf = setup.getConfig(configPath);
-        } catch (IOException e) {
+        } catch (ScratchException e) {
             //log
             throw new RuntimeException(e);
         }
@@ -42,7 +43,7 @@ public class App
             System.out.println(Arrays.deepToString(grid.matrix()));
             Result output = evaluator.evaluate(grid, bet);
             System.out.println(Utils.gson.toJson(output));
-        } catch(IllegalArgumentException | ScratchException e) {
+        } catch(ScratchException e) {
             //log
             e.printStackTrace();
         }
@@ -67,16 +68,18 @@ public class App
 
             String configPath = cmd.getOptionValue("c");
             String bettingAmount = cmd.getOptionValue("b");
-            if(configPath == null || configPath.isEmpty()) {
+            if(Strings.isNullOrEmpty(configPath)) {
                 System.out.println("No config file specified");
             } else{
-                    if (bettingAmount.trim().isEmpty()) {
+                    if (Strings.isNullOrEmpty(bettingAmount)) {
                         System.out.println("No betting amount specified");
                     } else {
-                        if (StringUtils.isNumeric(bettingAmount)) {
+                        if (!StringUtils.startsWith(bettingAmount, "-") && StringUtils.isNumeric(bettingAmount)) {
                             int bet = Integer.parseInt(bettingAmount);
                             App app = new App(configPath); //"./configtest.json"
                             app.start(bet);
+                        } else {
+                            System.out.println("Betting amount incorrect");
                         }
                     }
 

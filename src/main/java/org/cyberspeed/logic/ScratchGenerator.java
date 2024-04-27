@@ -21,10 +21,15 @@ public class ScratchGenerator {
         Map<String, Integer> symbolCount = new HashMap<>(); //useful later during evaluation
 
         //Pick a random spot for bonus symbol generation
-        String bonusName = drawAsymbol(config.probabilities().bonusSymbols().valuesByBonus());
-        int i = rgen.nextInt(config.rows());
-        int j = rgen.nextInt(config.columns());
-        grid[i][j] = bonusName;
+        final String bonusName;
+        if(!config.probabilities().bonusSymbols().valuesByBonus().isEmpty()) {
+            bonusName = drawAsymbol(config.probabilities().bonusSymbols().valuesByBonus());
+            int i = rgen.nextInt(config.rows());
+            int j = rgen.nextInt(config.columns());
+            grid[i][j] = bonusName;
+        } else {
+            bonusName = ConfigFile.NO_BONUS;
+        }
 
         //let's take the probability list for standard symbols
         for(ProbabilitySymbol probability : config.probabilities().standardSymbols()) {
@@ -65,7 +70,6 @@ public class ScratchGenerator {
         //note: for coverage because this is not supposed to happen
         throw new ScratchException("Random value generation fell outside expected range");
     }
-
 
 
 }

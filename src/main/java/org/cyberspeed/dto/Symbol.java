@@ -1,7 +1,9 @@
 package org.cyberspeed.dto;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import com.google.gson.annotations.SerializedName;
+import org.cyberspeed.exception.ScratchException;
 
 public record Symbol (
     @SerializedName("reward_multiplier") Double rewardMultiplier,
@@ -12,27 +14,29 @@ public record Symbol (
     public Symbol {
         // validation
         if(type == null || type.isEmpty()) {
-            throw new IllegalArgumentException("symbol type cannot be null or empty");
+            throw new ScratchException("symbol type cannot be null or empty");
         } else {
             type = type.toLowerCase();
-            if(!Enums.getIfPresent(SYMBOL_TYPE.class, type).isPresent()) {
-                throw new IllegalArgumentException("Invalid symbol type: " + type);
+            Optional<SYMBOL_TYPE> symbolType = Enums.getIfPresent(SYMBOL_TYPE.class, type);
+            if(!symbolType.isPresent()) {
+                throw new ScratchException("Invalid symbol type: " + type);
             }
-            if(type.equals(SYMBOL_TYPE.standard.name()) && rewardMultiplier == null) {
-                throw new IllegalArgumentException("reward_multiplier cannot be null for standard symbols");
+            if(symbolType.get().equals(SYMBOL_TYPE.standard) && rewardMultiplier == null) {
+                throw new ScratchException("reward_multiplier cannot be null for standard symbols");
             }
         }
         if(impact != null) {
             impact = impact.toLowerCase();
-            if(!Enums.getIfPresent(SYMBOL_IMPACT.class, impact).isPresent()) {
-                throw new IllegalArgumentException("Invalid impact: " + impact);
+            Optional<SYMBOL_IMPACT> symbolImpact = Enums.getIfPresent(SYMBOL_IMPACT.class, impact);
+            if(!symbolImpact.isPresent()) {
+                throw new ScratchException("Invalid impact: " + impact);
             }
-            if(impact.equals(SYMBOL_IMPACT.miss.name())) {
+            if(symbolImpact.get().equals(SYMBOL_IMPACT.miss)) {
                 extra = 0; //convenient to avoid doing some condition checks later on
-            } else if(impact.equals(SYMBOL_IMPACT.multiply_reward.name()) && rewardMultiplier == null) {
-                throw new IllegalArgumentException("reward_multiplier cannot be null if impact is reward_multiplier");
-            } else if(type.equals(SYMBOL_IMPACT.extra_bonus.name()) && extra == null) {
-                throw new IllegalArgumentException("extra cannot be null if impact is extra_bonus");
+            } else if(symbolImpact.get().equals(SYMBOL_IMPACT.multiply_reward) && rewardMultiplier == null) {
+                throw new ScratchException("reward_multiplier cannot be null if impact is reward_multiplier");
+            } else if(symbolImpact.get().equals(SYMBOL_IMPACT.extra_bonus) && extra == null) {
+                throw new ScratchException("extra cannot be null if impact is extra_bonus");
             }
         }
 

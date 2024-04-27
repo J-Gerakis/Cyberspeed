@@ -1,7 +1,7 @@
 package org.cyberspeed.exception;
 
 //business logic exception
-public class ScratchException extends Exception {
+public class ScratchException extends RuntimeException {
     public ScratchException(String message) {
         super(message);
     }

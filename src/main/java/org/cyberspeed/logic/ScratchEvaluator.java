@@ -98,21 +98,27 @@ public class ScratchEvaluator {
             }
             reward += symbolReward;
         }
-        //add bonus
-        Symbol bonus = configFile.symbols().get(grid.bonusSymbolName());
-        switch (Symbol.SYMBOL_IMPACT.valueOf(bonus.impact())) {
-            case extra_bonus:
-                reward += bonus.extra();
-                break;
-            case multiply_reward:
-                reward *= bonus.rewardMultiplier();
-                break;
-            case miss:
-            default:
-                break;
+        //add bonus, if relevant
+        final String appliedBonusSymbol;
+        if(reward > 0 && !ConfigFile.NO_BONUS.equals(grid.bonusSymbolName())) {
+            appliedBonusSymbol = grid.bonusSymbolName();
+            Symbol bonus = configFile.symbols().get(appliedBonusSymbol);
+            switch (Symbol.SYMBOL_IMPACT.valueOf(bonus.impact())) {
+                case extra_bonus:
+                    reward += bonus.extra();
+                    break;
+                case multiply_reward:
+                    reward *= bonus.rewardMultiplier();
+                    break;
+                case miss:
+                default:
+                    break;
+            }
+        } else {
+            appliedBonusSymbol = null;
         }
 
-        return new Result(grid.matrix(), reward.intValue(), appliedWinningCombinations, grid.bonusSymbolName());
+        return new Result(grid.matrix(), reward.intValue(), appliedWinningCombinations, appliedBonusSymbol);
     }
 
 

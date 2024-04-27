@@ -13,7 +13,7 @@ public class ConfigSetup {
     public ConfigFile getConfig(String configPath) throws ScratchException {
         final ConfigFile configFile;
         try {
-            configFile = Utils.gson.fromJson(readConfigFile(configPath), ConfigFile.class); ;
+            configFile = Utils.gson.fromJson(readConfigFile(configPath), ConfigFile.class);
         } catch (IOException e) {
             throw new ScratchException("Could not read configuration file", e);
         }

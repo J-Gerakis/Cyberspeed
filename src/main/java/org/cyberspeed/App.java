@@ -3,6 +3,8 @@ package org.cyberspeed;
 import com.google.common.base.Strings;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.cyberspeed.dto.ConfigFile;
 import org.cyberspeed.dto.output.Grid;
 import org.cyberspeed.dto.output.Result;
@@ -11,7 +13,6 @@ import org.cyberspeed.logic.ConfigSetup;
 import org.cyberspeed.logic.ScratchEvaluator;
 import org.cyberspeed.logic.ScratchGenerator;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -21,6 +22,7 @@ import java.util.Arrays;
  */
 public class App 
 {
+    public final static Logger logger = LogManager.getLogger(App.class);
     private final ScratchGenerator generator;
     private final ScratchEvaluator evaluator;
 
@@ -30,7 +32,7 @@ public class App
             ConfigSetup setup = new ConfigSetup();
             conf = setup.getConfig(configPath);
         } catch (ScratchException e) {
-            //log
+            logger.error("Error during config load", e);
             throw new RuntimeException(e);
         }
         generator = new ScratchGenerator(conf);
@@ -44,8 +46,8 @@ public class App
             Result output = evaluator.evaluate(grid, bet);
             System.out.println(Utils.gson.toJson(output));
         } catch(ScratchException e) {
-            //log
-            e.printStackTrace();
+            logger.error("Runtime scratch error", e);
+            //e.printStackTrace();
         }
     }
 
@@ -60,6 +62,7 @@ public class App
 
     public static void main( String[] args )
     {
+        logger.info("Starting Scratch Card application");
         try {
             System.out.println( "Hello Scratch Card!" );
             Options options = createOptions();
@@ -86,6 +89,7 @@ public class App
             }
 
         } catch (ParseException e) {
+            logger.error("Command line parsing error", e);
             throw new RuntimeException(e);
         }
     }

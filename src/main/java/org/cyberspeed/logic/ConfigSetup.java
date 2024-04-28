@@ -15,7 +15,7 @@ public class ConfigSetup {
         try {
             configFile = Utils.gson.fromJson(readConfigFile(configPath), ConfigFile.class);
         } catch (IOException e) {
-            throw new ScratchException("Could not read configuration file", e);
+            throw new ScratchException("Could not read configuration file: " + configPath, e);
         }
         return configFile;
     }

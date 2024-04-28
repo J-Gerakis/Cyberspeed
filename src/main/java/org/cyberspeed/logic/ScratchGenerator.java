@@ -2,7 +2,7 @@ package org.cyberspeed.logic;
 
 import org.cyberspeed.dto.ConfigFile;
 import org.cyberspeed.dto.ProbabilitySymbol;
-import org.cyberspeed.dto.output.Grid;
+import org.cyberspeed.dto.internal.Grid;
 import org.cyberspeed.exception.ScratchException;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class ScratchGenerator {
         this.config = config;
     }
 
-    public Grid generateGrid() throws ScratchException {
+    public Grid generateGrid() {
         String[][] grid = new String[config.rows()][config.columns()];
         Map<String, Integer> symbolCount = new HashMap<>(); //useful later during evaluation
 
@@ -41,10 +41,10 @@ public class ScratchGenerator {
             }
         }
 
-        return new Grid(grid, symbolCount, bonusName);
+        return new Grid(grid, symbolCount, bonusName, config.rows().equals(config.columns()));
     }
 
-    public String drawAsymbol(Map<String, Integer> pValues) throws ScratchException {
+    public String drawAsymbol(Map<String, Integer> pValues) {
         Map<Integer, String> indexMap = new HashMap<>();
         List<Integer> bucketList = new ArrayList<>();
         int currentIndex = 0;

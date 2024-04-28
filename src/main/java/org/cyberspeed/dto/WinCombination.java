@@ -42,7 +42,7 @@ public record WinCombination(
                                         throw new ScratchException("count cannot be null for same_symbols win condition");
                                 }
                                 if(count < 1) {
-                                        throw new ScratchException("count cannot be less than 1");
+                                        throw new ScratchException("count cannot be less than 1 for same_symbols win condition");
                                 }
                                 if(!winGroup.get().equals(WIN_GROUP.same_symbols)) {
                                         throw new ScratchException("Invalid group: " + group + " for same_symbols win condition");
@@ -56,6 +56,9 @@ public record WinCombination(
 //                                }
                                 //note: covered_area unused
                         }
+                }
+                if(count == null) {
+                        count = 0;
                 }
 
         }

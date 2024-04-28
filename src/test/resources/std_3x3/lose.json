@@ -1,0 +1,28 @@
+{
+  "bet_amount": 100,
+  "grid": {
+    "matrix": [
+      ["A", "B", "C"],
+      ["E", "B", "5x"],
+      ["F", "D", "C"]
+    ],
+    "symbol_count": {
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 1,
+      "E": 1,
+      "F": 1
+    },
+    "bonus_symbol_name": "5x",
+    "is_square": true
+  },
+  "output": {
+    "matrix": [
+      ["A", "B", "C"],
+      ["E", "B", "5x"],
+      ["F", "D", "C"]
+    ],
+    "reward": 0
+  }
+}

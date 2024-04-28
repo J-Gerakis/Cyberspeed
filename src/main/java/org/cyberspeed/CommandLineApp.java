@@ -6,8 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.cyberspeed.dto.output.Result;
-
 /**
  * Scratch card App
  * @author Jerome
@@ -44,9 +42,8 @@ public class CommandLineApp
                     } else {
                         if (!StringUtils.startsWith(bettingAmount, "-") && StringUtils.isNumeric(bettingAmount)) {
                             int bet = Integer.parseInt(bettingAmount);
-                            ScratchCard app = new ScratchCard(configPath); //"./configtest.json"
-                            Result output = app.start(bet);
-                            logger.debug(Utils.gson.toJson(output));
+                            ScratchCard app = new ScratchCard(configPath);
+                            logger.info(app.start(bet));
                         } else {
                             logger.warn("Betting amount incorrect");
                         }

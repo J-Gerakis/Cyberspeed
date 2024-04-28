@@ -1,0 +1,34 @@
+{
+  "bet_amount": 100,
+  "grid" : {
+    "matrix": [
+      ["F", "C", "C", "F", "C", "D"],
+      ["F", "A", "A","5x", "D", "D"],
+      ["F", "C", "E", "B", "C", "D"]
+    ],
+    "symbol_count": {
+      "A": 2,
+      "B": 1,
+      "C": 5,
+      "D": 4,
+      "E": 1,
+      "F": 4
+    },
+    "bonus_symbol_name": "5x",
+    "is_square": false
+  },
+  "output": {
+    "matrix": [
+      ["F", "C", "C", "F", "C", "D"],
+      ["F", "A", "A","5x", "D", "D"],
+      ["F", "C", "E", "B", "C", "D"]
+    ],
+    "reward": 19750,
+    "applied_winning_combinations": {
+      "C": ["same_symbol_5_times"],
+      "D": ["same_symbol_4_times", "same_symbols_vertically"],
+      "F": ["same_symbol_4_times", "same_symbols_vertically"]
+    },
+    "applied_bonus_symbol": "5x"
+  }
+}

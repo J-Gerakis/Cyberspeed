@@ -65,8 +65,16 @@ public class ScratchEvaluator {
                 if(rtlWinCondition != null && rtlDiagContiguous) {
                     rtlDiagContiguous = rightCornerSymbolName.equals(grid.get(index,configFile.columns() - 1 - index));
                 }
+            } else {
+                ltrDiagContiguous = false;
+                rtlDiagContiguous = false;
             }
-
+        }
+        if(ltrDiagContiguous) {
+            updateWinningCombinations(leftCornerSymbolName, ltrWinCondition);
+        }
+        if(rtlDiagContiguous) {
+            updateWinningCombinations(rightCornerSymbolName, rtlWinCondition);
         }
 
         //calculate reward
@@ -98,6 +106,11 @@ public class ScratchEvaluator {
             }
         } else {
             appliedBonusSymbol = null;
+        }
+
+        if(reward == 0) {
+            //if the game is a lost, we don't want this field to appear
+            appliedWinningCombinations = null;
         }
 
         return new Result(grid.matrix(), reward.intValue(), appliedWinningCombinations, appliedBonusSymbol);

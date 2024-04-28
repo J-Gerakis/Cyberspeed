@@ -1,0 +1,30 @@
+{
+  "bet_amount": 100,
+  "grid" : {
+    "matrix": [
+      ["A", "B", "C"],
+      ["B", "B", "10x"],
+      ["B", "D", "B"]
+    ],
+    "symbol_count": {
+      "A": 1,
+      "B": 5,
+      "C": 1,
+      "D": 1
+    },
+    "bonus_symbol_name": "10x",
+    "is_square": true
+  },
+  "output": {
+    "matrix": [
+      ["A", "B", "C"],
+      ["B", "B", "10x"],
+      ["B", "D", "B"]
+    ],
+    "reward": 50000,
+    "applied_winning_combinations": {
+      "B": ["same_symbol_5_times"]
+    },
+    "applied_bonus_symbol": "10x"
+  }
+}

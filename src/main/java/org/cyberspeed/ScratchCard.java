@@ -31,11 +31,12 @@ public class ScratchCard {
         evaluator = new ScratchEvaluator(conf);
     }
 
-    public Result start(int bet) {
+    public String start(int bet) {
         try {
             Grid grid = generator.generateGrid();
             logger.debug(Arrays.deepToString(grid.matrix()));
-            return evaluator.evaluate(grid, bet);
+            Result result = evaluator.evaluate(grid, bet);
+            return Utils.gson.toJson(result);
         } catch(ScratchException e) {
             logger.error("Runtime scratch error", e);
             throw new RuntimeException(e);

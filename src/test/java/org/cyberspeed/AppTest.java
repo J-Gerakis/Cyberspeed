@@ -1,20 +1,21 @@
 package org.cyberspeed;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
-/**
- * Unit test for simple App.
- */
 public class AppTest 
 {
     /**
-     * Rigorous Test :-)
+     * End-to-end happy path
      */
     @Test
-    public void shouldAnswerWithTrue()
+    public void endToEnd()
     {
-        assertTrue( true );
+        ScratchCard scratch = new ScratchCard("./src/test/resources/std_3x3/standard_config.json");
+        Assertions.assertDoesNotThrow(() -> {
+            String outputJson = scratch.start(100);
+            Assertions.assertNotNull(outputJson);
+        });
     }
+
 }

@@ -1,0 +1,30 @@
+{
+  "bet_amount": 100,
+  "grid" : {
+    "matrix": [
+      ["F", "C", "C"],
+      ["F", "A", "+500"],
+      ["F", "C", "C"]
+    ],
+    "symbol_count": {
+      "A": 1,
+      "C": 4,
+      "F": 3
+    },
+    "bonus_symbol_name": "+500",
+    "is_square": true
+  },
+  "output": {
+    "matrix": [
+      ["F", "C", "C"],
+      ["F", "A", "+500"],
+      ["F", "C", "C"]
+    ],
+    "reward": 2300,
+    "applied_winning_combinations": {
+      "C": ["same_symbol_4_times"],
+      "F": ["same_symbol_3_times", "same_symbols_vertically"]
+    },
+    "applied_bonus_symbol": "+500"
+  }
+}

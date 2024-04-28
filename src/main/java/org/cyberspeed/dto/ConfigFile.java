@@ -3,6 +3,7 @@ package org.cyberspeed.dto;
 import com.google.gson.annotations.SerializedName;
 import org.cyberspeed.exception.ScratchException;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,18 +31,27 @@ public record ConfigFile(
 
                 // consistency checks between symbol list and probabilities list
                 // note: so far we allow symbols to contain unused items
-                probabilities.standardSymbols().forEach(s -> validateSymbolPresenceAndPosition(symbols.keySet(), s));
-                // consistency checks between bonus symbol list and probabilities list
-                validateSymbolPresence(symbols.keySet(), probabilities.bonusSymbols().valuesByBonus().keySet());
-
-
+                validateProbabilities(symbols.keySet(), probabilities, rows, columns);
         }
 
-        private void validateSymbolPresenceAndPosition(Set<String> declaredSymbols, ProbabilitySymbol probabilitySymbol) {
-                if(probabilitySymbol.row() > MAX_SIZE || probabilitySymbol.column() > MAX_SIZE) {
-                        throw new ScratchException("row and column index for symbol probability exceed grid size");
-                }
-                validateSymbolPresence(declaredSymbols, probabilitySymbol.valuesBySymbol().keySet());
+        private void validateProbabilities(Set<String> declaredSymbols, Probabilities probabilities, int rowMax, int colMax) {
+                Set<String> gridAssignmentCheck = new HashSet<>();
+                probabilities.standardSymbols().forEach(s ->
+                        {
+                                if(s.row() >= rowMax || s.column() >= colMax) {
+                                        throw new ScratchException("row and column index for symbol probability exceed grid size");
+                                }
+                                String slotName = s.row() + "x" + s.column();
+                                if(gridAssignmentCheck.contains(slotName)) {
+                                        throw new ScratchException(String.format("Probability for %s is already assigned", slotName));
+                                } else {
+                                        gridAssignmentCheck.add(slotName);
+                                }
+                                validateSymbolPresence(declaredSymbols, s.valuesBySymbol().keySet());
+                        }
+                );
+                validateSymbolPresence(declaredSymbols, probabilities.bonusSymbols().valuesByBonus().keySet());
+
         }
 
         private void validateSymbolPresence(Set<String> declaredSymbols, Set<String> symbolsFromProbabilities) {

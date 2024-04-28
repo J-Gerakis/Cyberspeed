@@ -4,8 +4,6 @@ import org.cyberspeed.Utils;
 import org.cyberspeed.dto.ConfigFile;
 import org.cyberspeed.exception.ScratchException;
 
-import java.io.IOException;
-
 import static org.cyberspeed.Utils.readFileContent;
 
 public class ConfigSetup {
